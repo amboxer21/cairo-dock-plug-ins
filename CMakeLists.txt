@@ -11,7 +11,7 @@ include ("${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/GNUInstallDirs.cmake")
 ########### project ###############
 
 project ("cairo-dock-plugins")
-set (VERSION "3.4.99.alpha1")
+set (VERSION "3.4.1")
 
 add_definitions (-std=c99 -Wall -Werror-implicit-function-declaration) # -Wextra -Wwrite-strings -Wuninitialized -Werror-implicit-function-declaration -Wstrict-prototypes -Wreturn-type -Wparentheses -Warray-bounds)
 if (NOT DEFINED CMAKE_BUILD_TYPE)
@@ -573,11 +573,11 @@ if (enable-mono-interface)
 	if (NOT GMCS_EXECUTABLE OR NOT EXISTS ${GMCS_EXECUTABLE})
 		message (STATUS "Could not find Mono compiler gmcs, won't build Mono interface.")
 	else()
-		pkg_check_modules (MONO_PACKAGE dbus-sharp-2.0 dbus-sharp-glib-2.0 glib-sharp-2.0)
+		pkg_check_modules (MONO_PACKAGE glib-sharp-2.0 ndesk-dbus-1.0 ndesk-dbus-glib-1.0)
 		if (NOT MONO_PACKAGE_FOUND)
-			message (STATUS "Could not find dbus-sharp-2.0, dbus-sharp-glib-2.0 or glib-sharp-2.0; won't be built Mono interface.")
-			message (WARNING "These modules are required to compile DBus applet with Mono interface: dbus-sharp-2.0, dbus-sharp-glib-2.0 and glib-sharp-2.0")
-			set (MODULES_MISSING "${MODULES_MISSING} dbus-sharp-2.0 dbus-sharp-glib-2.0 glib-sharp-2.0")
+			message (STATUS "Could not find glib-sharp-2.0, ndesk-dbus-1.0 or ndesk-dbus-glib-1.0; won't be built Mono interface.")
+			message (WARNING "These modules are required to compile DBus applet with Mono interface: glib-sharp-2.0, ndesk-dbus-1.0 and ndesk-dbus-glib-1.0")
+			set (MODULES_MISSING "${MODULES_MISSING} glib-sharp-2.0 ndesk-dbus-1.0 ndesk-dbus-glib-1.0")
 		else()
 			set (MONO_FOUND TRUE)
 			set (with_mono yes)
@@ -842,17 +842,8 @@ if (enable-impulse)
 endif()
 
 ############# INDICATOR_GENERIC #################
-set (with_indicator_generic no)
-if (with_indicator3)
-	message (STATUS "> Indicator-Generic:")
-	set (GETTEXT_INDICATOR_GENERIC ${GETTEXT_PLUGINS})
-	set (VERSION_INDICATOR_GENERIC "0.0.2")
-	set (PACKAGE_INDICATOR_GENERIC "cd-Indicator-Generic")
-	set (with_indicator_generic yes)
-	set (indicator_genericdatadir "${pluginsdatadir}/Indicator-Generic")
-	configure_file (${CMAKE_CURRENT_SOURCE_DIR}/Indicator-Generic/data/Indicator-Generic.conf.in ${CMAKE_CURRENT_BINARY_DIR}/Indicator-Generic/data/Indicator-Generic.conf)
-	add_subdirectory (Indicator-Generic)
-endif()
+
+set (with_indicator_generic no) ###@@@
 
 ############# ILLUSION #################
 message (STATUS "> Illusion:")
@@ -1199,25 +1190,8 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/shortcuts/data/shortcuts.conf.in ${C
 add_subdirectory (shortcuts)
 
 ############# SHOW DESKTOP #################
-message (STATUS "> ShowDesktop:")
-enable_if_not_defined (enable-xrandr-support)
-if (enable-xrandr-support)
-	pkg_check_modules (SHOW_DESKTOP_XRANDR xrandr)
-	if (NOT SHOW_DESKTOP_XRANDR_FOUND)
-		message (STATUS "Could not find xrandr; ShowDesktop won't be built with screen resolution abilities.")
-		message (WARNING "This module is required to compile ShowDesktop applet with xRandr support: xrandr")
-		set (MODULES_MISSING "${MODULES_MISSING} xrandr")
-		set (with_xrandr no)
-	else ()
-		set (with_xrandr yes)
-	endif()
-endif()
-set (GETTEXT_SHOW_DESKTOP ${GETTEXT_PLUGINS})
-set (VERSION_SHOW_DESKTOP "1.2.9")
-set (PACKAGE_SHOW_DESKTOP "cd-showDesktop")
-set (show_desktopdatadir "${pluginsdatadir}/showDesktop")
-configure_file (${CMAKE_CURRENT_SOURCE_DIR}/showDesktop/data/showDesktop.conf.in ${CMAKE_CURRENT_BINARY_DIR}/showDesktop/data/showDesktop.conf)
-add_subdirectory (showDesktop)
+
+set (with_xrandr no) ###@@@
 
 ############# SHOW MOUSE #################
 message (STATUS "> Show Mouse:")
@@ -1250,25 +1224,8 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/slider/data/slider.conf.in ${CMAKE_C
 add_subdirectory (slider)
 
 ############# SOUND_EFFECTS #################
-set (with_sound_effects no)
-enable_if_not_defined (enable-sound-effects)
-if (enable-sound-effects)
-	pkg_check_modules (ALSA_PACKAGE alsa)
-	if (NOT ALSA_PACKAGE_FOUND)
-		message (STATUS "Could not find alsa; Cairo-Dock won't be built with Sound-Effect applet.")
-		message (WARNING "This module is required to compile Sound-Effect applet: alsa")
-		set (MODULES_MISSING "${MODULES_MISSING} alsa")
-	else()
-		message (STATUS "> Sound-Effects:")
-		set (GETTEXT_SOUND_EFFECTS ${GETTEXT_PLUGINS})
-		set (VERSION_SOUND_EFFECTS "0.0.2")
-		set (PACKAGE_SOUND_EFFECTS "cd-Sound-Effects")
-		set (with_sound_effects yes)
-		set (sound_effectsdatadir "${pluginsdatadir}/Sound-Effects")
-		configure_file (${CMAKE_CURRENT_SOURCE_DIR}/Sound-Effects/data/Sound-Effects.conf.in ${CMAKE_CURRENT_BINARY_DIR}/Sound-Effects/data/Sound-Effects.conf)
-		add_subdirectory (Sound-Effects)
-	endif()
-endif()
+
+set (with_sound_effects no) ###@@@
 
 ############# STACK #################
 message (STATUS "> Stack:")
@@ -1280,29 +1237,8 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/stack/data/stack.conf.in ${CMAKE_CUR
 add_subdirectory (stack)
 
 ############# STATUS NOTIFIER #################
-message (STATUS "> Status Notifier:")
-if (NOT DBUSMENU_GTK_FOUND)
-	message (STATUS "Could not find Status-Notifier libs; Cairo-Dock won't be built with Status-Notifier support.")
-	message (WARNING "This module is required to compile Status Notifier applet: ${DBUSMENU_GTK_MODULE}(-0.4)")
-	# set (MODULES_MISSING "${MODULES_MISSING} dbusmenu-gtk(-0.4)") # it should already be in the list.
-	set (with_status_notifier no)
-else()
-	if (force_indicator_applicationadded_have_hint)
-		set (INDICATOR_APPLICATIONADDED_HAS_HINT 1)
-	elseif (DEFINED force_indicator_applicationadded_have_hint)
-		set (INDICATOR_APPLICATIONADDED_HAS_HINT 0)
-	endif()
-	message (STATUS "  Used old DBus name = ${INDICATOR_OLD_NAMES}")
-	message (STATUS "  ApplicationAdded signal has 'Hint' = ${INDICATOR_APPLICATIONADDED_HAS_HINT}")
-	message (STATUS "  ApplicationAdded signal has 'Title' = ${INDICATOR_APPLICATIONADDED_HAS_TITLE}")
-	set (GETTEXT_STATUS_NOTIFIER ${GETTEXT_PLUGINS})
-	set (VERSION_STATUS_NOTIFIER "0.1.9")
-	set (PACKAGE_STATUS_NOTIFIER "cd-status-notifier")
-	set (with_status_notifier yes)
-	set (status_notifierdatadir "${pluginsdatadir}/Status-Notifier")
-	configure_file (${CMAKE_CURRENT_SOURCE_DIR}/Status-Notifier/data/Status-Notifier.conf.in ${CMAKE_CURRENT_BINARY_DIR}/Status-Notifier/data/Status-Notifier.conf)
-	add_subdirectory (Status-Notifier)
-endif()
+
+set (with_status_notifier no) ###@@@
 
 ############# SWITCHER #################
 message (STATUS "> Switcher:")
@@ -1314,25 +1250,8 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/switcher/data/switcher.conf.in ${CMA
 add_subdirectory (switcher)
 
 ############# SYSTEM MONITOR #################
-message (STATUS "> System Monitor:")
-enable_if_not_defined (enable-sensors-support)
-if (enable-sensors-support)
-	find_package (Sensors)
-	if (NOT SENSORS_FOUND)
-		message (STATUS "Could not find libsensors; System-Monitor won't be able to monitor fan speed and CPU temperature.")
-		message (WARNING "This package is required to compile System Monitor applet with Sensors support: sensors")
-		set (PROGRAMS_MISSING "${PROGRAMS_MISSING} sensors")
-		set (with_sensors no)
-	else ()
-		set (with_sensors yes)
-	endif()
-endif()
-set (GETTEXT_SYSTEM_MONITOR ${GETTEXT_PLUGINS})
-set (VERSION_SYSTEM_MONITOR "1.0.14")
-set (PACKAGE_SYSTEM_MONITOR "cd-system-monitor")
-set (system_monitordatadir "${pluginsdatadir}/System-monitor")
-configure_file (${CMAKE_CURRENT_SOURCE_DIR}/System-Monitor/data/System-Monitor.conf.in ${CMAKE_CURRENT_BINARY_DIR}/System-Monitor/data/System-Monitor.conf)
-add_subdirectory (System-Monitor)
+
+set (with_sensors no) ###@@@
 
 ############# SYSTRAY #################
 message (STATUS "> Systray:")
