@@ -59,3 +59,7 @@ reproduce the bug and join the content of debug.txt.
 * If it's a crash, please give us a backtrace of it with GDB. It's easy thanks to this [wiki page](http://wiki.glx-dock.org/?p=ddd).
 
 Thank you for your help!
+
+## Compile With:
+
+cmake -Denable-upower-support=OFF -Dwith_soundmenu=NO -Dwith_alsa=NO -Denable-alsa-mixer=FALSE -Dwith_sound_effects=NO -Dwith_kde_integration=NO -Dwith_xfce_integration=NO -Dwith_sound_effects=NO -Dwith_exif=NO -Dwith_impulse=NO -Dwith_gnome_integration=NO -Dwith_status_notifier=NO
